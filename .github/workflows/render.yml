@@ -1,0 +1,32 @@
+name: Render Remotion MP4
+
+on:
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Extract project
+        run: unzip -o lubang-suara-remotion.zip -d project
+
+      - name: Install dependencies
+        working-directory: project
+        run: npm ci
+
+      - name: Render MP4
+        working-directory: project
+        run: npx remotion render LubangSuara out/lubang-suara.mp4 --gl=angle
+
+      - name: Upload MP4
+        uses: actions/upload-artifact@v4
+        with:
+          name: lubang-suara-mp4
+          path: project/out/lubang-suara.mp4
